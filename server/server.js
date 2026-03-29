@@ -3,8 +3,8 @@ const mongoose = require("mongoose");
 const cors = require("cors");
 require("dotenv").config();
 
-const authRoutes = require("./server/routes/auth");
-const noteRoutes = require("./server/routes/notes");
+const authRoutes = require("./routes/auth");
+const noteRoutes = require("./routes/notes");
 
 const app = express();
 
@@ -29,3 +29,12 @@ mongoose.connect("mongodb://Shripad:test123@ac-ux3enfi-shard-00-00.0gy0bum.mongo
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+const path = require("path");
+
+app.use(express.static(path.join(__dirname, "../Client")));
+
+
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, "../Client/index.html"));
+});
