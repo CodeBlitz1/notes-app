@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <h2>Notes</h2>
+  <input id="title" placeholder="Title" />
+  <input id="content" placeholder="Content" />
+  <button onclick="addNote()">Add</button>
+
+  <ul id="notes"></ul>
+
+  <script>
+    const userId = localStorage.getItem("userId");
+
+    async function fetchNotes() {
+      const res = await fetch(`http://localhost:5000/api/notes/${userId}`);
+      const data = await res.json();
+      notes.innerHTML = data.map(n => `
+        <li>
+          ${n.title} - ${n.content}
+          <button onclick="deleteNote('${n._id}')">Delete</button>
+        </li>
+      `).join("");
+    }
+
+    async function addNote() {
+      await fetch("http://localhost:5000/api/notes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          userId,
+          title: title.value,
+          content: content.value
+        })
+      });
+      fetchNotes();
+      }
+
+    async function deleteNote(id) {
+      await fetch(`http://localhost:5000/api/notes/${id}`, {
+        method: "DELETE"
+      });
+      fetchNotes();
+    }
+
+    fetchNotes();
+  </script>
+</body>
+</html>
